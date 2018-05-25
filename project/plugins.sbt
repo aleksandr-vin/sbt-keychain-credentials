@@ -1,0 +1,1 @@
+logLevel := sbt.Level.Info
