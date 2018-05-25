@@ -6,6 +6,11 @@ sbtPlugin := true
 
 scalaVersion := "2.12.6"
 
-organization in ThisBuild := "com.xvyg.sbt"
+organization in ThisBuild := "com.xvyg"
+licenses in ThisBuild += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-version in ThisBuild := "1.0.0-a"
+enablePlugins(GitVersioning)
+
+publishMavenStyle in ThisBuild := false
+bintrayRepository in ThisBuild := "sbt-plugins"
+bintrayOrganization in bintray := None

@@ -1,6 +1,6 @@
 ## SBT Keychain Credentials Plugin
 
-This plugin adds `com.xvyg.sbt.keychain.Credentials` object _(of the same name as `sbt.Credentials`)_,
+This plugin adds `com.xvyg.keychain.Credentials` object _(of the same name as `sbt.Credentials`)_,
 bringing capability of obtaining password from Mac OS X Keychain.
 
 ### Use Case
@@ -19,7 +19,7 @@ Where `sbt.Credentials` sources these properties from the file:
 To remove plain text password from that file, you add _sbt-keychain-credentials_ as
 a global plugin by adding this lines to your _~/.sbt/1.0/plugins/build.sbt_:
                  
-    addSbtPlugin("com.xvyg.sbt" % "sbt-keychain-credentials" % "1.0.0")
+    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.0")
 
 and then you import its `Credentials` object:
  
