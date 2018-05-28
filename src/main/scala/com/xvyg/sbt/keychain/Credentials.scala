@@ -5,7 +5,8 @@ import java.util.Properties
 import sys.process.Process
 
 object Credentials {
-  def apply(file: java.io.File): sbt.Credentials = {
+
+  def apply(file: java.io.File, logger: sbt.Logger = Credentials.Logger): sbt.Credentials = {
     logger.info(s"Reading credentials from $file ...")
     val (realm, host, user, password) =
       try {
@@ -47,9 +48,9 @@ object Credentials {
     }
   }
 
-  private object logger {
-    def info(x: Any) = Unit
-    def warn(x: Any) = println(x)
-    def error(x: Any) = println(x)
+  private object Logger extends sbt.Logger {
+    def trace(t: => Throwable): Unit = println(t)
+    def success(message: => String): Unit = println(message)
+    def log(level: sbt.Level.Value, message: => String): Unit = println(message)
   }
 }
