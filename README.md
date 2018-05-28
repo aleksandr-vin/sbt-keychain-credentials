@@ -23,7 +23,7 @@ The problem is **password stored in plain text** on your filesystem.
 To remove plain text password from the file, you add _sbt-keychain-credentials_ as
 a global plugin by adding this line to your _~/.sbt/1.0/plugins/build.sbt_:
                  
-    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.1")
+    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.2")
     
 and these lines to your _~/.sbt/1.0/global.sbt_ (with your own path to credentials file):
 
