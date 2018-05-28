@@ -15,17 +15,26 @@ Where `sbt.Credentials` sources these properties from the file:
     host=repo.mynexus.com
     user=aleksandrvin
     password=XXXXXX
-    
-To remove plain text password from that file, you add _sbt-keychain-credentials_ as
-a global plugin by adding these lines to your _~/.sbt/1.0/plugins/build.sbt_:
+
+The problem is **password stored in plain text** on your filesystem. 
+
+#### Fix for SBT 1.X
+
+To remove plain text password from the file, you add _sbt-keychain-credentials_ as
+a global plugin by adding this line to your _~/.sbt/1.0/plugins/build.sbt_:
                  
-    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.0")
+    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.1")
     
-and then you import its `Credentials` object:
- 
+and these lines to your _~/.sbt/1.0/global.sbt_ (with your own path to credentials file):
+
     import com.xvyg.sbt.keychain.Credentials
-    
-everywhere you have one from `sbt`.
+
+    credentials ++= Seq(Credentials(Path.userHome / ".ivy2" / ".credentials", sLog.value))
+
+This will place credentials with password, obtained from your system's keychain, somewhere
+close to the head of `credentials` list. So everywhere in your project, where you have
+`Credentials(Path.userHome / ".ivy2" / ".credentials")`, you need to check that they
+are appended to the list.
 
 This will bring you next warning when you recompile your project:
 
@@ -55,6 +64,22 @@ example it is:
     security add-generic-password -a aleksandrvin -s repo.mynexus.com -w
     
 It will ask you for the password when called. And don't forget to remove password line from
-your file.
+that file.
 
-Recompiling the project should not warn you anymore about the password, then you are done.
+Recompiling the project you will see only this sort of warnings:
+
+    [info] Reading credentials from /Users/aleksandr.vinokurov/.ivy2/.credentials ...
+    [info] Obtaining password from system's keychain ...
+    [warn] password not specified in credentials file: /Users/aleksandr.vinokurov/.ivy2/.credentials
+
+Where first two information messages come from `keychain.Credentials` and the later --
+from `sbt.Credentials`, but that credentials will be ignored.
+
+You're done.
+
+#### Fix for SBT 0.13.X
+
+Unfortunately in SBT 0.13.X credentials without password are not ignored and they fail the
+sbt tasks. 
+
+So the solution is not yet found.
