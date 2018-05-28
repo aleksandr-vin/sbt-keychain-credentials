@@ -23,7 +23,7 @@ object Credentials {
           e.printStackTrace()
           sys.exit(1)
       }
-    if (password == null) {
+    if (password == null || password.trim == "") {
       logger.info("Obtaining password from system's keychain ...")
       val process = Process(s"security find-generic-password -a $user -s $host -w").lineStream_!
       if (process.length == 1) {

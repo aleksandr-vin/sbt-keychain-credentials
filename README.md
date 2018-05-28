@@ -63,23 +63,21 @@ example it is:
 
     security add-generic-password -a aleksandrvin -s repo.mynexus.com -w
     
-It will ask you for the password when called. And don't forget to remove password line from
-that file.
+It will ask you for the password when called.
 
-Recompiling the project you will see only this sort of warnings:
+Now you need to replace that `password=XXXXXXX` line with `password=`. If you remove the
+whole line -- you will see sort of the warnings below:
 
     [info] Reading credentials from /Users/aleksandr.vinokurov/.ivy2/.credentials ...
     [info] Obtaining password from system's keychain ...
     [warn] password not specified in credentials file: /Users/aleksandr.vinokurov/.ivy2/.credentials
 
 Where first two information messages come from `keychain.Credentials` and the later --
-from `sbt.Credentials`, but that credentials will be ignored.
+from `sbt.Credentials`. It will be ignored by the SBT, but anyway -- it is nicer to keep
+the line `password=` in the credentials file to skip those warnings.
 
-You're done.
+You're done. Recompiling your project should go without warnings about that password thing.
 
 #### Fix for SBT 0.13.X
 
-Unfortunately in SBT 0.13.X credentials without password are not ignored and they fail the
-sbt tasks. 
-
-So the solution is not yet found.
+Plugin needs special build for SBT 0.13.X, which is not ready yet. Stay tuned.
