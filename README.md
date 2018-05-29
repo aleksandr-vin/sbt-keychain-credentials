@@ -23,7 +23,7 @@ The problem is **password stored in plain text** on your filesystem.
 To remove plain text password from the file, you add _sbt-keychain-credentials_ as
 a global plugin by adding this line to your _~/.sbt/1.0/plugins/build.sbt_:
                  
-    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.2")
+    addSbtPlugin("com.xvyg" % "sbt-keychain-credentials" % "1.0.3")
     
 and these lines to your _~/.sbt/1.0/global.sbt_ (with your own path to credentials file):
 
@@ -80,4 +80,5 @@ You're done. Recompiling your project should go without warnings about that pass
 
 #### Fix for SBT 0.13.X
 
-Plugin needs special build for SBT 0.13.X, which is not ready yet. Stay tuned.
+Plugin is cross built for SBT 0.13.X, all what is different is that you need to apply steps
+in _~/.sbt/0.13/_ directory.

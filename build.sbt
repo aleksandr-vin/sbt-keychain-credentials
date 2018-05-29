@@ -14,3 +14,5 @@ enablePlugins(GitVersioning)
 publishMavenStyle in ThisBuild := false
 bintrayRepository in ThisBuild := "sbt-plugins"
 bintrayOrganization in bintray := None
+
+crossSbtVersions := Vector("0.13.16", "1.1.2")
