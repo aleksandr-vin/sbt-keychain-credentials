@@ -1,7 +1,9 @@
 ## SBT Keychain Credentials Plugin
 
 This plugin adds `com.xvyg.keychain.Credentials` object _(of the same name as `sbt.Credentials`)_,
-bringing capability of obtaining password from Mac OS X Keychain.
+bringing capability of obtaining password from the system keychain, the following keychains are supported:
+* Mac OS X Keychain
+* GNOME's `gnome-keyring` and its companion `secret-tool`
 
 ### Use Case
 
@@ -29,7 +31,7 @@ and these lines to your _~/.sbt/1.0/global.sbt_ (with your own path to credentia
 
     import com.xvyg.sbt.keychain.Credentials
 
-    credentials ++= Seq(Credentials(Path.userHome / ".ivy2" / ".credentials", sLog.value))
+    credentials ++= Seq(Credentials(Path.userHome / ".ivy2" / ".credentials", sLog.value, Credentials.MAC))
 
 This will place credentials with password, obtained from your system's keychain, somewhere
 close to the head of `credentials` list. So everywhere in your project, where you have
