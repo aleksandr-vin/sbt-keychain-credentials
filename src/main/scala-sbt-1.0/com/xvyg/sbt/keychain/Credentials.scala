@@ -43,7 +43,7 @@ object Credentials {
       }
     if (password == null || password.trim == "") {
       logger.info("Obtaining password from system's keychain ...")
-      Try(Process(keychainType.command(user, host)).lineStream_!) match {
+      Try(Process(keychainType.command(user, host)).lineStream) match {
         case Success(p) if p.length == 1 => sbt.Credentials(realm, host, user, p.head)
         case Failure(_) | Success(_) =>
           logger.error(keychainType.errorMessage)
