@@ -2,11 +2,29 @@ package com.xvyg.sbt.keychain
 
 import java.io.FileInputStream
 import java.util.Properties
+
+import scala.util.{Failure, Success, Try}
 import sys.process.Process
 
 object Credentials {
 
-  def apply(file: java.io.File, logger: sbt.Logger = Credentials.Logger): sbt.Credentials = {
+  sealed trait KeychainType {
+    def command(user: String, host: String): String
+    def createMessage(user: String, host: String, realm: String): String
+    def errorMessage: String
+  }
+  case object MAC extends KeychainType {
+    override def command(user:String, host: String) = s"security find-generic-password -a $user -s $host -w"
+    override def createMessage(user: String, host: String, realm: String) = s"security add-generic-password -a $user -s $host -w"
+    override val errorMessage = "Problem occurred while obtaining password from system's keychain"
+  }
+  case object GNOME extends KeychainType {
+    override def command(user:String, host: String) = s"secret-tool lookup $host $user"
+    override def createMessage(user: String, host: String, realm: String) = s"secret-tool store  --label '$realm' $host $user"
+    override val errorMessage = "Problem occurred while obtaining password from system's keychain, make sure that 'secret-tool' is installed"
+  }
+
+  def apply(file: java.io.File, logger: sbt.Logger = Credentials.Logger, keychainType: KeychainType = MAC): sbt.Credentials = {
     logger.info(s"Reading credentials from $file ...")
     val (realm, host, user, password) =
       try {
@@ -25,12 +43,11 @@ object Credentials {
       }
     if (password == null || password.trim == "") {
       logger.info("Obtaining password from system's keychain ...")
-      val process = Process(s"security find-generic-password -a $user -s $host -w").lineStream_!
-      if (process.length == 1) {
-        sbt.Credentials(realm, host, user, process.head)
-      } else {
-        logger.error("Problem occurred while obtaining password from system's keychain")
-        sys.exit(1)
+      Try(Process(keychainType.command(user, host)).lineStream) match {
+        case Success(p) if p.length == 1 => sbt.Credentials(realm, host, user, p.head)
+        case Failure(_) | Success(_) =>
+          logger.error(keychainType.errorMessage)
+          sys.exit(1)
       }
     } else {
       logger.warn("")
@@ -41,7 +58,7 @@ object Credentials {
       logger.warn("  Consider removing it from that file and storing in system's Keychain.")
       logger.warn("  You can use the command below for this:")
       logger.warn("")
-      logger.warn(s"   security add-generic-password -a $user -s $host -w")
+      logger.warn(s"   ${keychainType.createMessage(user, host, realm)}")
       logger.warn("************************************************************************")
       logger.warn("")
       sbt.Credentials(realm, host, user, password)
